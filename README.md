@@ -118,7 +118,7 @@ line 107 at `src\disksim_logorg.c` `#define MAX_QUEUE_LENGTH 20000000`
    5. 不確定(應該是有幾個子區塊)
    6. offset
    7. index size (有多少個index在子區塊。1200*65=78000)
-   8. track結尾方向 (`0,65`就是指0~64。`64,-65`就是指64~0)
+   8. track結尾方向 (`0,65`就是指0\~64。`64,-65`就是指64\~0)
    9. TRACK或IDX。
       1.  如果是TRACK。則接著TP的index。像是這邊是指向`5`，`0, 1199, 1200`的TP。然後再接上第幾片的disk。這邊的`0`就是指第`0`片的disk
       2.  如果是IDX。則是指向第幾個區塊的意思。
