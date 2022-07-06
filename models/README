@@ -1,0 +1,35 @@
+This file contains diskspecs for Seagate Cheetah 15k5 disk. The specs will only 
+work with DiskSim 4.0 or later.
+
+The following files are included in this package:
+
+*.seeks			detailed seek profile 
+
+*.diskspecs             top-level file, includes the mechanical model (*.model) file
+
+layout.mappings         raw layout/address translations 
+			(not used by diskspecs/DiskSim but useful for general info)
+
+*.model			disk mechanical and layout model 
+			(can be used by the diskmodel library)
+
+*-skews.layout		G4 layout encoding of the layout-only information 
+			includes the track/cylinder/zone skews 
+
+
+
+*.parv			parameters definition for DiskSim model with one disk on a
+			single bus with single controller
+
+statdefs 		statistics defintion for DiskSim
+
+
+These specs were extraced with DIXtrac from a 146 GB disk and validated with Disksim 
+replay with RMS of 0.297 (see below).
+
+Validation output
+-----------------
+[linux-box]$ disksim Seagate-Cheetah15k5.parv random.outv validate random.trace 0 disk0 "Enable caching in buffer" 0  disk0 "Fast write level" 0 disk0 "Buffer continuous read" 0
+disksim_run_simulation(): simulated 2624676 events
+[linux-box]$ rms random.outv random.outv -1 -1 1
+rms = 0.297164

@@ -42,3 +42,45 @@ Please visit one of these sites to join the mailing lists:
 
 https://sos.ece.cmu.edu/mailman/listinfo/disksim-announce
 https://sos.ece.cmu.edu/mailman/listinfo/disksim-users
+
+# Other Note
+
+## Environment
+
+* 需要安裝`flex`和`bison`
+
+```bash
+sudo apt install flex bison
+```
+
+## Build 
+
+* 直接`make`即可使用
+* build完成的執行檔為`src/disksim`
+
+```bash
+make
+```
+
+* 使用`make clean`再執行`make`重新安裝
+
+```bash
+make clean
+make
+```
+
+## Test
+
+```bash
+cd valid
+bash runvalid
+```
+
+## DiskSim Command
+
+* Example: Seagate-Cheetah15k5
+
+```bash
+disksim models/Seagate-Cheetah15k5.parv output_file ascii trace_file 0
+grep "Disk Seek distance average" output_file
+```

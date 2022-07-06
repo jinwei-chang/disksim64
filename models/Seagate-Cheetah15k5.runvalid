@@ -1,0 +1,7 @@
+#!/bin/sh
+
+echo ""
+echo "SEAGATE_CHEETAH15k5 (rms should be about 0.297)"
+nice ../src/disksim Seagate-Cheetah15k5.parv random.outv validate random.trace 0 disk0 "Enable caching in buffer" 0  disk0 "Fast write level" 0 disk0 "Buffer continuous read" 0
+../src/rms random.outv random.outv -1 -1 1
+

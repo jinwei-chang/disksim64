@@ -27,13 +27,13 @@
 # COPYRIGHT HOLDERS WILL BEAR NO LIABILITY FOR ANY USE OF THIS SOFTWARE
 # OR DOCUMENTATION.
 
+
 BISON = bison
 FLEX = flex
 
 include .paths
 
-LDFLAGS = -lm -L. -ldisksim $(DISKMODEL_LDFLAGS) $(MEMSMODEL_LDFLAGS) \
-                            $(LIBPARAM_LDFLAGS) $(LIBDDBG_LDFLAGS) 
+LDFLAGS = -lm -L. -ldisksim $(DISKMODEL_LDFLAGS) $(LIBPARAM_LDFLAGS) $(LIBDDBG_LDFLAGS)
 
 HP_FAST_OFLAGS = +O4
 NCR_FAST_OFLAGS = -O4 -Hoff=BEHAVED 
@@ -46,9 +46,10 @@ CFLAGS = -I. $(DISKMODEL_CFLAGS) $(LIBPARAM_CFLAGS) $(LIBDDBG_CFLAGS) $(DEBUG_OF
 FBSYSSIM_OFLAGS = -O6 -fomit-frame-pointer -fexpensive-optimizations -fschedule-insns2
 
 #CC = cc
-CC = gcc -Wall -Wno-unused -MD
+CC = g++ -Wall -Wno-unused -Wno-write-strings -MD
 # because purify spits out warnings on stdout...
-CC-DEP = gcc $(LIBPARAM_CFLAGS) $(DISKMODEL_CFLAGS)
+#CC-DEP = gcc $(LIBPARAM_CFLAGS) $(DISKMODEL_CFLAGS)
+CC-DEP = g++ $(LIBPARAM_CFLAGS) $(DISKMODEL_CFLAGS)
 
 # The following lines create a dependency target based on the state of 
 # the modules files. If the .c and .h files are not created, the dependency
@@ -98,13 +99,14 @@ DISKSIM_SRC = disksim.c disksim_intr.c disksim_pfsim.c \
 	disksim_statload.c disksim_stat.c disksim_rand48.c disksim_malloc.c \
 	disksim_cache.c disksim_cachemem.c disksim_cachedev.c \
 	disksim_simpledisk.c disksim_device.c \
-	disksim_loadparams.c \
+	disksim_loadparams.c disksim_simresult.c\
 	raw_layout.c
 
-DISKSIM_OBJ = $(DISKSIM_SRC:.c=.o) 
+DISKSIM_OBJ     = $(DISKSIM_SRC:.c=.o) 
 
 $(DISKSIM_OBJ): %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@
+
 
 
 # production rule for making disksim with freeblocks support
@@ -118,9 +120,8 @@ rms : rms.c
 hplcomb : hplcomb.c
 	$(CC) $< -o $@
 
-libdisksim.a: $(MODULEDEPS) $(DISKSIM_OBJ) disksim_interface.o
-	ar cru $@ $(DISKSIM_OBJ) disksim_interface.o modules/*.o
-	ranlib $@
+libdisksim.a: $(MODULEDEPS) $(DISKSIM_OBJ) $(DISKSIM_OBJ_CPP) disksim_interface.o
+	ar crus $@ $(DISKSIM_OBJ) $(DISKSIM_OBJ_CPP) disksim_interface.o modules/*.o
 	mkdir -p ../lib
 	cp libdisksim.a ../lib
 
@@ -129,6 +130,16 @@ disksim : $(MODULEDEPS) libdisksim.a disksim_main.o
 
 syssim: syssim_driver.o libdisksim.a
 	$(CC) $(CFLAGS) -o $@ syssim_driver.o disksim_interface.o $(LDFLAGS)
+
+skippy: skippy_sim.o libdisksim.a
+	$(CC) $(CFLAGS) -o $@ skippy_sim.o syssim_opts.o disksim_interface.o $(LDFLAGS)
+
+seek: seek_sim.o libdisksim.a
+	$(CC) $(CFLAGS) -o $@ seek_sim.o syssim_opts.o disksim_interface.o $(LDFLAGS)
+
+seek2: seek_sim2.o libdisksim.a
+	$(CC) $(CFLAGS) -o $@ seek_sim2.o syssim_opts.o disksim_interface.o $(LDFLAGS)
+
 
 ########################################################################
 
